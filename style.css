@@ -1,0 +1,93 @@
+body {
+    background-color: #171723;
+    color: white;
+    font-family: "Ubuntu", serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
+  #maindiv {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+  }
+  
+  button {
+    cursor: pointer;
+  }
+  
+  .fa-cubes {
+    font-size: 70px;
+    margin: 10px 10px;
+  }
+  
+  #title {
+    text-align: center;
+    width: 100%;
+  }
+  
+  h1 {
+    font-size: 50px;
+    font-weight: 400;
+    margin: 0px 10px 10px 10px;
+  }
+  
+  .mainbutton {
+    width: 100px;
+    height: 100px;
+    border-radius: 12px;
+    border-width: 0;
+    font-size: 30px;
+    color: white;
+    background-color: #2E324B;
+    padding: 20px 20px;
+  }
+  
+  #mainbuttons {
+    text-align: center;
+    padding: 20px 20px;
+    height: 120px;
+  }
+  
+  .mbdiv {
+    display: inline-block;
+      padding: 15px 15px;
+  }
+  
+  .hoverer {
+      overflow: visible;
+      width: 120px;
+      height: 120px;
+      border-width: 1px;
+      border-color: transparent;
+      display: flex;
+    justify-content: center;
+    align-items: center;
+      border-style: solid;
+      border-radius: 18px;
+      transition-duration: 0.4s;
+  }
+  
+  .hoverer:hover {
+      border-color: #ebedeb;
+  }
+  
+  .buttontext {
+    margin: 10px;
+  }
+  
+  #extras {
+    text-align: center;
+  }
+  
+  .extra {
+    width: 40px;
+    height: 40px;
+    font-size: 35px;
+    background-color: transparent;
+    border-width: 0;
+    color: white;
+    margin: 10px 10px;
+  }

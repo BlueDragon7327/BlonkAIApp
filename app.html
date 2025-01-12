@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groq API Request with History</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000000;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 14px;
+        }
+        .status {
+            font-weight: bold;
+        }
+        #history {
+            margin-top: 20px;
+            text-align: left;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        #history .entry {
+            margin-bottom: 10px;
+        }
+        #history .user {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        #history .assistant {
+            font-weight: bold;
+            color: #2196F3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>BlonkAI Chat</h1>
+        <button id="sendRequestBtn">Enter Prompt</button>
+        <div id="response">
+            <p>Click the button to send a prompt to BlonkAI</p>
+        </div>
+        <div id="history">
+            <p><strong>Conversation History:</strong></p>
+            <!-- History entries will appear here -->
+        </div>
+    </div>
+
+    <script>
+        let history = [
+            { role: "system", content: "You are BlonkAI, an AI developed by BlueDragon." } // Initialize with a system message
+        ];
+
+        document.getElementById('sendRequestBtn').addEventListener('click', async () => {
+            const url = 'https://api.groq.com/openai/v1/chat/completions';
+            const apiKey = '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';
+
+            const userInput = prompt("Enter your prompt:");
+            if (!userInput) {
+                alert("Prompt cannot be blank!");
+                return;
+            }
+
+            // Add user input to history
+            history.push({ role: "user", content: userInput });
+
+            document.getElementById('response').innerHTML = '<p class="status">Sending request...</p>';
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: "llama-3.3-70b-versatile",
+                        messages: history
+                    })
+                });
+
+                if (response.ok) {
+                    const jsonResponse = await response.json();
+                    const assistantContent = jsonResponse.choices[0]?.message?.content;
+
+                    if (assistantContent) {
+                        // Display assistant's response
+                        document.getElementById('response').innerHTML = `
+                            <p class="status">Request successful!</p>
+                            <p>Assistant's Response:</p>
+                            <pre>${assistantContent}</pre>
+                        `;
+                        
+                        // Add assistant's response to history
+                        history.push({ role: "assistant", content: assistantContent });
+
+                        // Update the conversation history section
+                        updateHistory();
+                    } else {
+                        document.getElementById('response').innerHTML = `
+                            <p class="status" style="color: red;">No assistant response found.</p>
+                        `;
+                    }
+                } else {
+                    document.getElementById('response').innerHTML = `
+                        <p class="status" style="color: red;">Error: ${response.status} ${response.statusText}</p>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('response').innerHTML = `
+                    <p class="status" style="color: red;">Request failed: ${error.message}</p>
+                `;
+            }
+        });
+
+        function updateHistory() {
+            const historyContainer = document.getElementById('history');
+            historyContainer.innerHTML = '<p><strong>Conversation History:</strong></p>';
+            
+            // Display each message in the history
+            history.forEach(entry => {
+                const entryElement = document.createElement('div');
+                entryElement.classList.add('entry');
+                entryElement.classList.add(entry.role);
+                entryElement.innerHTML = `<strong>${entry.role.charAt(0).toUpperCase() + entry.role.slice(1)}:</strong> ${entry.content}`;
+                historyContainer.appendChild(entryElement);
+            });
+        }
+    </script>
+</body>
+</html>
