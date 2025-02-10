@@ -1,93 +1,250 @@
-body {
-    background-color: #171723;
-    color: white;
-    font-family: "Ubuntu", serif;
-    font-weight: 400;
-    font-style: normal;
+/* Reset and base styles */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
   }
-  
-  #maindiv {
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    height: 100vh;
+    background-color: #0F1117;
+    color: #ECECF1;
+    display: flex;
+    overflow: hidden;
+  }
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #666;
+    border-radius: 3px;
+  }
+  .sidebar {
+    width: 260px;
+    background-color: #151723;
+    height: 100vh;
+    padding: 8px;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+  }
+  .chat-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+  }
+  .chat-item {
+    padding: 10px;
+    margin: 4px 0;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: background-color 0.2s;
+    position: relative;
+  }
+  .chat-item:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+  .close-chat-btn {
     position: absolute;
-    left: 50%;
+    right: 10px;
     top: 50%;
-    -webkit-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #ECECF1;
+    cursor: pointer;
+    font-size: 14px;
+    display: none;
   }
-  
-  button {
+  .chat-item:hover .close-chat-btn {
+    display: block;
+  }
+  .new-chat-btn {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    background-color: #2C2F42;
+    color: #ECECF1;
+    cursor: pointer;
+    margin-bottom: 10px;
+  }
+  .new-chat-btn:hover {
+    background-color: #363B54;
+  }
+  .main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  .chat-container {
+flex: 1;
+overflow-y: auto;
+padding: 60px 200px 120px;
+}
+
+#messagesContainer {
+overflow-y: auto;
+max-height: 100%;
+}
+/* Spinner style */
+.spinner {
+border: 4px solid #f3f3f3;
+border-top: 4px solid #6366f1;
+border-radius: 50%;
+width: 24px;
+height: 24px;
+animation: spin 1s linear infinite;
+margin: 0 auto;
+display: none; /* Initially hidden */
+}
+
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}
+
+
+  /* Fade-in animation for new chats */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .fade-in {
+    animation: fadeIn 0.5s ease-out;
+  }
+  .welcome-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    padding: 20px;
+  }
+  .welcome-screen h1 {
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+    background: linear-gradient(120deg, #6366f1, #8b5cf6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .quick-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 600px;
+  }
+  .quick-action-btn {
+    padding: 14px 18px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: #ECECF1;
     cursor: pointer;
   }
-  
-  .fa-cubes {
-    font-size: 70px;
-    margin: 10px 10px;
+  .message {
+    padding: 24px;
+    margin: 8px 0;
+    border-radius: 8px;
   }
-  
-  #title {
-    text-align: center;
+  .user-message {
+    background-color: #1A1C27;
+  }
+  .assistant-message {
+    background-color: #20232F;
+  }
+  .input-footer {
+    position: fixed;
+    bottom: 0;
+    left: 260px;
+    right: 0;
+    padding: 20px 200px 40px;
+    background: linear-gradient(to bottom, transparent, #0F1117 40%);
+  }
+  .input-container {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+    background: #1A1C27;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+  }
+  .input-box {
     width: 100%;
-  }
-  
-  h1 {
-    font-size: 50px;
-    font-weight: 400;
-    margin: 0px 10px 10px 10px;
-  }
-  
-  .mainbutton {
-    width: 100px;
-    height: 100px;
-    border-radius: 12px;
-    border-width: 0;
-    font-size: 30px;
-    color: white;
-    background-color: #2E324B;
-    padding: 20px 20px;
-  }
-  
-  #mainbuttons {
-    text-align: center;
-    padding: 20px 20px;
-    height: 120px;
-  }
-  
-  .mbdiv {
-    display: inline-block;
-      padding: 15px 15px;
-  }
-  
-  .hoverer {
-      overflow: visible;
-      width: 120px;
-      height: 120px;
-      border-width: 1px;
-      border-color: transparent;
-      display: flex;
-    justify-content: center;
-    align-items: center;
-      border-style: solid;
-      border-radius: 18px;
-      transition-duration: 0.4s;
-  }
-  
-  .hoverer:hover {
-      border-color: #ebedeb;
-  }
-  
-  .buttontext {
-    margin: 10px;
-  }
-  
-  #extras {
-    text-align: center;
-  }
-  
-  .extra {
-    width: 40px;
-    height: 40px;
-    font-size: 35px;
+    padding: 16px 45px 16px 16px;
     background-color: transparent;
-    border-width: 0;
-    color: white;
-    margin: 10px 10px;
+    border: none;
+    color: #ECECF1;
+    font-size: 15px;
+    resize: none;
+    outline: none;
   }
+  .send-button {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    background-color: transparent;
+    border: none;
+    color: #6366f1;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 8px;
+  }
+  .disclaimer {
+    text-align: center;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 12px;
+  }
+
+.model-toggle {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  color: #ECECF1;
+  font-size: 14px;
+}
+
+.model-toggle input {
+  margin-right: 8px;
+}
+
+.model-selection {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #2C2F42;
+  border-radius: 6px;
+}
+
+.model-selection label {
+  margin-right: 10px;
+  color: #ECECF1;
+  font-size: 14px;
+}
+
+.model-selection select {
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  background-color: #1A1C27;
+  color: #ECECF1;
+  font-size: 14px;
+  outline: none;
+  cursor: pointer;
+}
