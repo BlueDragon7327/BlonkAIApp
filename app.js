@@ -10,7 +10,6 @@ const welcomeScreen = document.getElementById('welcomeScreen');
 const chatList = document.getElementById('chatList');
 const messagesContainer = document.getElementById('messagesContainer');
 const modelToggle = document.getElementById('modelToggle'); // New element for model toggle
-const modelDropdown = document.getElementById('modelDropdown'); // New element for model dropdown
 
 // Quick actions list with multiple prompts
 const quickActionsList = [
@@ -31,21 +30,11 @@ function scrollToBottom() {
 }
 
 // Add a message to the chat
-function addMessage(content, sender = 'user', isStreaming = false) {
-    let messageDiv;
-    if (isStreaming) {
-        messageDiv = document.querySelector('.message.streaming');
-        if (!messageDiv) {
-            messageDiv = document.createElement('div');
-            messageDiv.classList.add('message', `${sender}-message`, 'fade-in', 'streaming');
-            messagesContainer.appendChild(messageDiv);
-        }
-    } else {
-        messageDiv = document.createElement('div');
-        messageDiv.classList.add('message', `${sender}-message`, 'fade-in');
-        messagesContainer.appendChild(messageDiv);
-    }
-    messageDiv.innerText += content;
+function addMessage(content, sender = 'user') {
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('message', `${sender}-message`, 'fade-in');
+    messageDiv.innerText = content;
+    messagesContainer.appendChild(messageDiv);
     scrollToBottom();
 }
 
@@ -217,85 +206,32 @@ async function sendMessage() {
     updateChatDisplay();
     saveChats();
 
-    const selectedModel = modelDropdown.value;
-    const model = modelToggle.checked ? "deepseek-r1-distill-llama-70b" : selectedModel; // Determine model based on dropdown and toggle
+    const model = modelToggle.checked ? "deepseek-r1-distill-llama-70b" : "llama-3.3-70b-versatile"; // Determine model based on toggle
 
     try {
-        let assistantContent = '';
-        if (selectedModel === "llama-3.3-70b-versatile") {
-            const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer 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'
-                },
-                body: JSON.stringify({
-                    model: model,
-                    messages: chats[currentChatId].messages,
-                    stream: true
-                })
-            });
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer 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'
+            },
+            body: JSON.stringify({
+                model: model,
+                messages: chats[currentChatId].messages
+            })
+        });
 
-            if (response.ok) {
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
-                let done = false;
+        if (response.ok) {
+            const jsonResponse = await response.json();
+            const assistantContent = jsonResponse.choices[0]?.message?.content;
 
-                while (!done) {
-                    const { value, done: doneReading } = await reader.read();
-                    done = doneReading;
-                    const chunk = decoder.decode(value, { stream: true });
-                    const lines = chunk.split('\n').filter(line => line.trim() !== '');
-                    for (const line of lines) {
-                        const message = line.replace(/^data: /, '');
-                        if (message === '[DONE]') {
-                            done = true;
-                            break;
-                        }
-                        try {
-                            const parsed = JSON.parse(message);
-                            const delta = parsed.choices[0].delta.content;
-                            if (delta) {
-                                assistantContent += delta;
-                                addMessage(delta, 'assistant', true);
-                            }
-                        } catch (e) {
-                            console.error('Error parsing stream message:', message, e);
-                        }
-                    }
-                }
-                document.querySelector('.message.streaming').classList.remove('streaming');
-            }
-        } else if (selectedModel === "chatgpt-4.0") {
-            const response = await fetch('https://api.penguinai.tech/v1/chat/completions', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer sk-1234'
-                },
-                body: JSON.stringify({
-                    model: "gpt-4o",
-                    messages: [
-                        { role: 'system', content: 'You are BlonkAI, an AI developed by the guy named BlueDragon. this current model you are on is built using GPT-4o' },
-                        ...chats[currentChatId].messages
-                    ],
-                    temperature: 0.7,
-                    max_tokens: 200
-                })
-            });
-
-            if (response.ok) {
-                const jsonResponse = await response.json();
-                const assistantContent = jsonResponse.choices[0]?.message?.content;
-
-                if (assistantContent) {
-                    chats[currentChatId].messages.push({
-                        role: 'assistant',
-                        content: assistantContent
-                    });
-                    updateChatDisplay();
-                    saveChats();
-                }
+            if (assistantContent) {
+                chats[currentChatId].messages.push({
+                    role: 'assistant',
+                    content: assistantContent
+                });
+                updateChatDisplay();
+                saveChats();
             }
         }
     } catch (error) {
