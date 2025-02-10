@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlonkAI Chat</title>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <div class="sidebar">
+    <button class="new-chat-btn">+ New chat</button>
+    <div class="chat-list" id="chatList"></div>
+  </div>
+  <div class="main-content">
+    <div class="chat-container" id="history">
+      <!-- The welcome screen is shown when there are no user messages -->
+      <div class="welcome-screen" id="welcomeScreen">
+        <h1>What can I help with?</h1>
+        <div class="quick-actions"></div>
+      </div>
+      <!-- This container will hold user and assistant messages -->
+      <div id="messagesContainer"></div>
+    </div>
+    <div class="input-footer">
+      <div class="input-container">
+        <textarea class="input-box" placeholder="Message BlonkAI..." rows="1"></textarea>
+        <button class="send-button">
+          <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="24" width="24">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
+      <label class="model-toggle">
+        <input type="checkbox" id="modelToggle">
+        Reasoning Mode
+      </label>
+      <p class="disclaimer">BlonkAI can make mistakes. Check important info.</p>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
